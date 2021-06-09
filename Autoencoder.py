@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 from keras.models import Model
 from keras.layers import Dense, Input
 from keras.datasets import mnist
@@ -11,7 +5,6 @@ import numpy as np
 import mne
 
 
-# In[2]:
 
 
 batch_size = 128
@@ -22,7 +15,7 @@ channels_num = 61
 encoding_dim = 32
 
 
-# In[3]:
+
 
 
 raw = mne.io.read_raw_brainvision("data/resting_state/zavrin_open_eyes_ecg_15021500.vhdr", preload=True)
@@ -30,7 +23,7 @@ data = raw.get_data().T
 data.shape
 
 
-# In[4]:
+
 
 
 # Build autoencoder model
@@ -49,8 +42,6 @@ autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 autoencoder.summary()
 
 
-# In[5]:
-
 
 from sklearn.model_selection import train_test_split
 
@@ -65,8 +56,6 @@ print(X_train.shape)
 print(X_test.shape)
 
 
-# In[6]:
-
 
 X_train_noise = X_train + 0.3 * np.random.normal(loc=0.0, scale=1.0, size=X_train.shape)
 X_test_noise = X_test + 0.3 * np.random.normal(loc=0.0, scale=1.0, size=X_test.shape)
@@ -76,17 +65,12 @@ print(X_train_noise.shape)
 print(X_test_noise.shape)
 
 
-# In[7]:
 
-
-# Train
 autoencoder.fit(X_train_noise, X_train, verbose=1,
                 validation_data=(X_test_noise, X_test))
 
 
-# ### Сжатие в формат pickle
 
-# In[8]:
 
 
 import types
@@ -95,9 +79,7 @@ import keras.models
 import pickle
 import mne as mn
 from sklearn.metrics import mean_squared_error
-
-
-# In[9]:
+|
 
 
 def make_keras_picklable():
@@ -122,21 +104,11 @@ def make_keras_picklable():
     cls.__setstate__ = __setstate__
 
 
-# In[10]:
-
 
 make_keras_picklable()
 pickle.dump(encoder, open("encoder.p", "wb"))
 pickle.dump(decoder, open("decoder.p", "wb"))
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 load_encoder = pickle.load(open("encoder.p", "rb"))

@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
 import importlib 
 import keras
@@ -19,20 +13,15 @@ from sklearn.model_selection import train_test_split
 import h5py    
 
 
-# In[2]:
-
 
 from keras import backend as K
 K.tensorflow_backend._get_available_gpus()
 
 
-# In[3]:
-
 
 get_ipython().system('pip install keras')
 
 
-# In[3]:
 
 
 def read_h5_file(file_name, scaler = None, preprocess = False):
@@ -44,7 +33,6 @@ def read_h5_file(file_name, scaler = None, preprocess = False):
     return ecg_data
 
 
-# In[4]:
 
 
 def train_scaler(scaler, train_ecg_names, log = False):
@@ -66,14 +54,10 @@ def load_scaler(path):
     return scaler
 
 
-# In[5]:
-
 
 train_ecg_dir = "./data/train/"
 trained_scaler_path = None
 
-
-# In[2]:
 
 
 train_ecg_dir = "./data/train/"
@@ -82,8 +66,6 @@ all_train_ecg_names = [x for x in os.listdir(train_ecg_dir)
 ecg_num = len(all_train_ecg_names)
 print("Number of ECG overall:", ecg_num)
 
-
-# In[7]:
 
 
 if trained_scaler_path:
@@ -95,8 +77,6 @@ else:
     print("Params after training ", scaler.get_params())
     save_scaler("./StandardScaler.p", scaler)
 
-
-# In[13]:
 
 
 window_size = 10
@@ -114,7 +94,6 @@ cnnencoder.summary()
 print(cnnencoder.output_shape)
 
 
-# In[14]:
 
 
 cnndecoder = Sequential((
@@ -128,7 +107,7 @@ cnndecoder.summary()
 print(cnndecoder.output_shape)
 
 
-# In[15]:
+
 
 
 from keras.models import Model
@@ -142,20 +121,20 @@ autoencoder.compile(loss='mse', optimizer='adam') # .compile(optimizer='adadelta
 autoencoder.summary()
 
 
-# In[16]:
+
 
 
 b1, b2, b3 = 'shuhova_08022017_rest_ecg_processed.h5', 'zavrib_post_ecg_eyesopen15021500_processed.h5', 'zavrin_15021500_eyesclosed_post_ecg_processed.h5'
 
 
-# In[17]:
+
 
 
 all_train_ecg_names = np.array(all_train_ecg_names)
 all_train_ecg_names = all_train_ecg_names[(all_train_ecg_names != b1) & (all_train_ecg_names != b2) & (all_train_ecg_names != b3)]
 
 
-# In[18]:
+
 
 
 overall_epoch_num = 10
@@ -168,13 +147,12 @@ print("test_ecg_name is ", test_ecg_name)
 test_data = read_h5_file(test_ecg_name, scaler, True)
 
 
-# In[19]:
 
 
 learn_file_length = 300000
 
 
-# In[20]:
+
 
 
 import threading
@@ -194,7 +172,7 @@ def threadsafe_generator(f):
     return g
 
 
-# In[21]:
+
 
 
 batch_length = 10
@@ -223,7 +201,7 @@ def generate_batch():
                 files_count -= 1
 
 
-# In[ ]:
+
 
 
 history = autoencoder.fit_generator(generate_batch(), 
@@ -234,13 +212,12 @@ history = autoencoder.fit_generator(generate_batch(),
                                    )
 
 
-# In[137]:
+
 
 
 history_path = "train_hist_51.txt"
 
 
-# In[138]:
 
 
 cnnencoder.save('CNN_encoder50.p')
@@ -249,7 +226,7 @@ with open(history_path, 'wb') as file:
     pickle.dump(history.history, file)
 
 
-# In[139]:
+
 
 
 for epoch in range(overall_epoch_num//file_epoch_num):
@@ -269,20 +246,6 @@ with open(history_path, 'wb') as file:
     pickle.dump(history.history, file)
 
 
-# In[ ]:
-
-
 test_data.reshape(-1, 60, 58, 1)
 
-
-# In[14]:
-
-
 test_data.shape
-
-
-# In[ ]:
-
-
-'shuhova_08022017_rest_ecg_processed.h5', 'zavrib_post_ecg_eyesopen15021500_processed.h5', 
-
